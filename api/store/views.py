@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
 from . import models
 from . import serializers
 
@@ -14,8 +16,29 @@ class CategoryViewSet(ModelViewSet):
 
 class ProductViewSet(ModelViewSet):
     
-    queryset = models.Product.objects.all()
-    serializer_class = serializers.GetProductSerializer
+    queryset = models.Product.objects.filter(quantity__gt=1)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['quantity']
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_serializer_class(self):
+
+        if self.request.method == 'POST':
+            return serializers.CreateProductSerializer
+        if self.request.method == 'PATCH':
+            return serializers.UpdateProductSerializer
+        return serializers.GetProductSerializer
+    
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return models.Product.objects.all()
+        return models.Product.objects.filter(quantity__gt=1)
+    
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PATCH', 'DELETE']:
+            return [IsAdminUser()]
+        return [AllowAny()]
+        
 
 class CustomerViewSet(ModelViewSet):
 

@@ -17,7 +17,19 @@ class GetProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Product
-        fields = '__all__'
+        fields = ['id', 'title', 'description', 'unit_price', 'quantity', 'last_update', 'category']
+
+class CreateProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Product
+        fields = ['title', 'description', 'unit_price', 'quantity', 'category']
+
+class UpdateProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Product
+        fields = ['title', 'description', 'unit_price', 'quantity', 'category']
 
 class GetCustomerSerializer(serializers.ModelSerializer):
 
