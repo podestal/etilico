@@ -31,8 +31,8 @@ class ProductViewSet(ModelViewSet):
     
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return models.Product.objects.all()
-        return models.Product.objects.filter(quantity__gt=1)
+            return models.Product.objects.select_related('category')
+        return models.Product.objects.filter(quantity__gt=1).select_related('category')
     
     def get_permissions(self):
         if self.request.method in ['POST', 'PATCH', 'DELETE']:

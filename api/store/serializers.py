@@ -15,6 +15,8 @@ class GetCategorySerializer(serializers.ModelSerializer):
 
 class GetProductSerializer(serializers.ModelSerializer):
 
+    category = GetCategorySerializer()
+
     class Meta:
         model = models.Product
         fields = ['id', 'title', 'description', 'unit_price', 'quantity', 'last_update', 'category']
