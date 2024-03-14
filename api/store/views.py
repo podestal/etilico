@@ -13,6 +13,15 @@ class PromotionViewSet(ModelViewSet):
 class CategoryViewSet(ModelViewSet):
     queryset = models.Category.objects.all()
     serializer_class = serializers.GetCategorySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title']
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PATCH', 'DELETE']:
+            return [IsAdminUser()]
+        return [AllowAny()]
+
 
 class ProductViewSet(ModelViewSet):
     
