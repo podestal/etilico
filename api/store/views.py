@@ -53,9 +53,12 @@ class ProductViewSet(ModelViewSet):
 
 class CustomerViewSet(ModelViewSet):
 
-    queryset = models.Customer.objects.all()
-    serializer_class = serializers.GetCustomerSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return serializers.CreateCustomerSerializer
+        return serializers.GetCustomerSerializer
 
     @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated])
     def me(self, request):
@@ -67,6 +70,11 @@ class CustomerViewSet(ModelViewSet):
         if self.request.method == 'DELETE':
             return[IsAdminUser()]
         return [IsAuthenticated()]
+    
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return models.Customer.objects.select_related('user')
+        return models.Customer.objects.filter(user_id=self.request.user.id).select_related('user')
 
 
 class CartViewSet(ModelViewSet): 

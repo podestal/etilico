@@ -1,5 +1,6 @@
 from . import models
 from rest_framework import serializers
+from core.serializers import UserSerializer
 
 class GetPromotionSerializer(serializers.ModelSerializer):
 
@@ -35,9 +36,18 @@ class UpdateProductSerializer(serializers.ModelSerializer):
 
 class GetCustomerSerializer(serializers.ModelSerializer):
 
+    user = UserSerializer()
+
     class Meta:
         model = models.Customer
-        fields = '__all__'
+        fields = ['id', 'phone', 'membership', 'user']
+
+class CreateCustomerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Customer
+        fields = ['phone', 'membership', 'user']
+
 
 class GetCartSerializer(serializers.ModelSerializer):
 
